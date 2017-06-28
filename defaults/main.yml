@@ -1,0 +1,4 @@
+---
+
+MAKER_HOME: "/home/MAKER"
+AUGUSTUS_URL: "http://bioinf.uni-greifswald.de/augustus/binaries/augustus-3.2.3.tar.gz"

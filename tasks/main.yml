@@ -1,0 +1,42 @@
+---
+  
+- name: Create MAKER home dir
+  file:
+    path: "{{ MAKER_HOME }}"
+    state: directory
+
+- name: Download Augustus
+  get_url:
+    url: "{{ AUGUSTUS_URL }}"
+    dest: "/tmp/augustus-3.2.3.tar.gz"
+
+- name: Unarchive Augustus
+  unarchive:
+    src: "/tmp/augustus-3.2.3.tar.gz"
+    dest: "{{ MAKER_HOME }}"
+    remote_src: yes
+
+- name: Build Augustus
+  make:
+    chdir: "{{ MAKER_HOME }}/augustus-3.2.3/src"
+
+- name: Add Augustus to $PATH by adding line to bashrc
+  lineinfile:
+    path: "/home/{{ ATMOUSERNAME }}/.bashrc"
+    line: "export PATH=\"{{ MAKER_HOME }}/augustus-3.2.3/bin:$PATH\""
+    state: present
+    insertafter: EOF
+
+- name: Add AUGUSTUS_CONFIG_PATH to bashrc
+  lineinfile:
+    path: "/home/{{ ATMOUSERNAME }}/.bashrc"
+    line: "export AUGUSTUS_CONFIG_PATH=\"{{ MAKER_HOME }}/augustus-3.2.3/config:$PATH\""
+    state: present
+    insertafter: EOF
+
+- name: Cleanup
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "/tmp/augustus-3.2.3.tar.gz"
